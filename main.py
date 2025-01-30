@@ -8,7 +8,7 @@ import re
 TOKEN = '7681175404:AAHQIGRxJ1FTXxvlnycEHco4jCrIbJtNu_Q'  # Замените на свой токен
 bot = telebot.TeleBot(TOKEN)
 
-# Путь к папке для сохранения файлов (измените на нужный)
+# Путь к папке для сохранения файлов
 FILE_DIRECTORY = 'bot_data'
 #  Путь к файлу (не изменяется, так как файл сохраняется в указанную выше папку)
 FILE_PATH = os.path.join(FILE_DIRECTORY, 'data.xlsx')
