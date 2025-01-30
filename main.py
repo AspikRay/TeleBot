@@ -146,13 +146,35 @@ def create_directory_if_not_exists(directory):
         os.makedirs(directory)
 
 
+# Функция для сохранения результатов анализа в файл
+def save_analysis_to_file(analysis_results, file_type, file_directory):
+    # Создаем директорию, если ее нет
+    create_directory_if_not_exists(file_directory)
+    
+    # Формируем имя файла на основе типа анализа
+    if file_type == "grades":
+        file_name = os.path.join(file_directory, "student_grades_analysis.txt")
+    elif file_type == "homework":
+        file_name = os.path.join(file_directory, "homework_check_analysis.txt")
+    else:
+       file_name = os.path.join(file_directory, "analysis_results.txt")
+
+    try:
+         with open(file_name, 'w', encoding='utf-8') as f:
+             for item in analysis_results:
+                f.write(item + '\n')
+    except Exception as e:
+        return f"Ошибка при записи в файл: {e}"
+    return file_name
+
+
 # Обработчик команды /start
 @bot.message_handler(commands=['start'])
 def start(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     item1 = types.KeyboardButton("Загрузить файл")
-    item2 = types.KeyboardButton("Показать данные")
-    item3 = types.KeyboardButton("Анализ успеваемости")
+    item2 = types.KeyboardButton("Показать данные о домашних заданиях")
+    item3 = types.KeyboardButton("Показать данные о отчете по студентам")
     markup.add(item1, item2, item3)
     bot.send_message(message.chat.id, "Привет! Я бот для обработки Excel/CSV файлов. Выберите действие:", reply_markup=markup)
     
@@ -163,11 +185,11 @@ def load_file_button(message):
     bot.send_message(message.chat.id, "Отправьте файл Excel (.xlsx, .xls) или CSV.")
     bot.register_next_step_handler(message, handle_document)
 
-@bot.message_handler(func=lambda message: message.text == "Показать данные")
+@bot.message_handler(func=lambda message: message.text == "Показать данные о домашних заданиях")
 def show_data_button(message):
       show_data(message)
 
-@bot.message_handler(func=lambda message: message.text == "Анализ успеваемости")
+@bot.message_handler(func=lambda message: message.text == "Показать данные о отчете по студентам")
 def analyze_grades_button(message):
       show_grades(message)
 
@@ -205,9 +227,13 @@ def show_data(message):
     try:
         result = calculate_homework_status_v1(FILE_PATH)
         if isinstance(result, list):
-            for msg in result:
-                if msg.strip():
-                    bot.send_message(message.chat.id, msg)
+            # Сохраняем результаты анализа в файл
+            file_path = save_analysis_to_file(result, "homework", FILE_DIRECTORY)
+            # Отправляем файл пользователю
+            with open(file_path, 'rb') as f:
+               bot.send_document(message.chat.id, f)
+           
+            
         else:
             if result.strip():
                 bot.send_message(message.chat.id, result)
@@ -224,9 +250,12 @@ def show_grades(message):
     try:
         result = analyze_student_grades(FILE_PATH)
         if isinstance(result, list):
-            for msg in result:
-                if msg.strip():
-                    bot.send_message(message.chat.id, msg)
+            # Сохраняем результаты анализа в файл
+            file_path = save_analysis_to_file(result, "grades", FILE_DIRECTORY)
+            # Отправляем файл пользователю
+            with open(file_path, 'rb') as f:
+              bot.send_document(message.chat.id, f)
+          
         else:
             if result.strip():
                 bot.send_message(message.chat.id, result)
