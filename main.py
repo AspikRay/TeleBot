@@ -3,7 +3,7 @@ import pandas as pd
 from io import BytesIO
 import re
 
-TOKEN = '7681175404:AAHQIGRxJ1FTXxvlnycEHco4jCrIbJtNu_Q'
+TOKEN = '7681175404:AAHQIGRxJ1FTXxvlnycEHco4jCIbJtNu_Q'
 
 bot = telebot.TeleBot(TOKEN)
 
