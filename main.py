@@ -5,7 +5,7 @@ import os
 from telebot import types
 import re
 
-TOKEN = '7681175404:AAHQIGRxJ1FTXxvlnycEHco4jCrIbJtNu_Q'  # Замените на свой токен
+TOKEN = '7681175404:AAHQIGRxJ1FTXxvlnycEHco4jCrIbJtNu_Q'
 bot = telebot.TeleBot(TOKEN)
 
 # Путь к папке для сохранения файлов
